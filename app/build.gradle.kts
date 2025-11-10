@@ -1,22 +1,21 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-    // Adicionar o plugin KSP (Kotlin Symbol Processing) para o Room
-    id("com.google.devtools.ksp") version "1.9.20-1.0.14" // Versão 1.9.20-1.0.14 ou mais recente
+
+    // USAR KAPT para evitar os erros de compilação
+    id("kotlin-kapt")
+
     alias(libs.plugins.kotlin.compose)
 }
 
 android {
     namespace = "com.example.academia"
-    compileSdk = 34 // Manter uma versão mais comum (34)
-    // No seu código original, você usou `release(36)` que depende de uma definição
-    // em `libs.versions.toml`. Usei 34 como um fallback seguro.
-    // Mantenha o original se tiver certeza da definição `release(36)`.
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "com.example.academia"
         minSdk = 24
-        targetSdk = 34 // Use targetSdk 34 para consistência
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0"
 
@@ -33,7 +32,6 @@ android {
         }
     }
     compileOptions {
-        // Mudar para JavaVersion.VERSION_1_8 se tiver problemas, mas 11 é o padrão moderno
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
@@ -46,34 +44,33 @@ android {
 }
 
 dependencies {
-    // Core Android/Kotlin
+    // Core Android/Kotlin e Compose
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0") // Adicionado
-
-    // Compose
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
 
-    // --- DEPENDÊNCIAS DO PROJETO (Adicionadas) ---
+    // --- DEPENDÊNCIAS DO PROJETO ---
 
-    // Room (Banco de Dados) - Use a versão mais recente
+    // Room (Banco de Dados - CRUD, 2 Tabelas)
     val roomVersion = "2.6.1"
     implementation("androidx.room:room-runtime:$roomVersion")
     implementation("androidx.room:room-ktx:$roomVersion")
-    ksp("androidx.room:room-compiler:$roomVersion") // Compiler usando KSP
+    // USANDO KAPT
+    kapt("androidx.room:room-compiler:$roomVersion")
 
-    // Retrofit (API) - Use a versão mais recente
+    // Retrofit (API)
     val retrofitVersion = "2.9.0"
     implementation("com.squareup.retrofit2:retrofit:$retrofitVersion")
     implementation("com.squareup.retrofit2:converter-gson:$retrofitVersion")
 
     // Navigation Compose
-    implementation("androidx.navigation:navigation-compose:2.7.6") // Use a versão mais recente
+    implementation("androidx.navigation:navigation-compose:2.7.6")
 
     // --- DEPENDÊNCIAS DE TESTE ---
     testImplementation(libs.junit)
